@@ -12,6 +12,9 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+const uploadDir = path.join(__dirname, 'uploads');
+fs.mkdirSync(uploadDir, { recursive: true });
+
 const fileDBPath = './userFiles.json';
 let otpStore = {};
 
@@ -26,8 +29,8 @@ app.post('/send-otp', async (req, res) => {
     port: 587,
     secure: false,
     auth: {
-      user: "vivekvats2875@gmail.com",
-      pass: "urysnfhzaltwxlct"
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
     }
   });
 
@@ -40,7 +43,7 @@ app.post('/send-otp', async (req, res) => {
 });
 
     await transporter.sendMail({
-      from: '"Gallery OTP" <vivekvats2875@gmail.com>',
+      from: `"Gallery OTP" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: 'Your OTP Code',
       text: `Your OTP is ${otp}. It is valid for 5 minutes.`
@@ -166,6 +169,7 @@ app.delete('/delete', (req, res) => {
   res.json({ message: "Deleted successfully" });
 });
 
-app.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
