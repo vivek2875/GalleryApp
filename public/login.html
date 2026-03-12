@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="center-screen">
+  <div class="form-container">
+    <h2>Login</h2>
+    <form onsubmit="handleLogin(event)">
+      <input type="email" id="email" placeholder="Email" required />
+      <div class="email-otp-wrapper">
+        <button type="button" onclick="sendOTP()">Send OTP</button>
+        <input type="text" id="otp" placeholder="Enter OTP" required />
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

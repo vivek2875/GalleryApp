@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Gallery</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="header">
+    <h1>Your Personal Gallery</h1>
+    <div class="actions">
+      <button onclick="window.location.href='upload.html'">Upload</button>
+      <button onclick="logoutUser()">Logout</button>
+    </div>
+  </div>
+  <div class="gallery-container" id="gallery"></div>
+  <script>
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      alert("You are not logged in.");
+      window.location.href = "login.html";
+    }
+
+    function loadGallery() {
+      fetch(`http://localhost:3000/gallery?email=${userEmail}`)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById('gallery');
+          container.innerHTML = '';
+
+          if (!data.files || data.files.length === 0) {
+            container.innerHTML = "<p>No files uploaded yet.</p>";
+            return;
+          }
+
+          data.files.forEach(file => {
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+
+            let mediaTag = '';
+            if (file.type === 'image') {
+              mediaTag = `<img src="http://localhost:3000/uploads/${userEmail}/${file.filename}" alt="${file.originalname}" />`;
+            } else if (file.type === 'video') {
+              mediaTag = `
+                <video controls>
+                  <source src="http://localhost:3000/uploads/${userEmail}/${file.filename}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>`;
+            }
+
+            const uploadTime = new Date(file.uploadedAt).toLocaleString();
+
+            item.innerHTML = `
+              ${mediaTag}
+              <p>${file.originalname}</p>
+              <small>Uploaded: ${uploadTime}</small>
+              <button class="download-btn" onclick="downloadFile('${file.filename}')">Download</button>
+              <button class="delete-btn" onclick="deleteFile('${file.filename}')">Delete</button>
+            `;
+
+            container.appendChild(item);
+          });
+        });
+    }
+
+    function downloadFile(filename) {
+      window.location.href = `http://localhost:3000/download?email=${userEmail}&filename=${filename}`;
+    }
+
+    function deleteFile(filename) {
+      if (!confirm("Are you sure you want to delete this file?")) return;
+
+      fetch(`http://localhost:3000/delete?email=${userEmail}&filename=${filename}`, {
+        method: 'DELETE',
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        loadGallery();
+      });
+    }
+
+    function logoutUser() {
+      localStorage.removeItem('userEmail');
+      window.location.href = "index.html";
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>

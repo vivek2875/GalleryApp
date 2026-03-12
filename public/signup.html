@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="center-screen">
+  <div class="form-container">
+    <h2>Create an Account</h2>
+    <form onsubmit="handleSignUp(event)">
+        <input type="text" id="firstName" placeholder="First Name" required />
+        <input type="text" id="lastName" placeholder="Last Name" required />
+        <div class="email-otp-wrapper">
+          <input type="email" id="email" placeholder="Email" required />
+          <button type="button" onclick="sendOTP()">Send OTP</button>
+        </div>
+        <input type="text" id="otp" placeholder="Enter OTP" required />
+        <button type="submit">Submit</button>
+      </form>
+      
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

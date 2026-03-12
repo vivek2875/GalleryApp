@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Upload to Gallery</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="center-screen">
+  <div class="upload-container">
+    <h2>Upload Image/Video</h2>
+    <form id="uploadForm">
+      <input type="file" name="file" required />
+      <button type="submit">Upload</button>
+    </form>
+    <a class="back-link" href="gallery.html">Go to Gallery</a>
+  </div>
+
+  <script>
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      alert("You are not logged in.");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const fileInput = this.elements['file'];
+      if (!fileInput.files.length) {
+        return alert("Please select a file.");
+      }
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+      formData.append("email", userEmail);
+
+      fetch("http://localhost:3000/upload", {
+        method: "POST",
+        body: formData,
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.message) {
+          alert(data.message);
+          window.location.href = "gallery.html";
+        } else {
+          alert("Upload failed");
+          console.error(data);
+        }
+      })
+      .catch(err => {
+        alert("Upload failed");
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>
